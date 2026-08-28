@@ -1,24 +1,14 @@
 import { useEffect } from 'react';
-import { getAll } from './services/task.service';
+import CategoryList from "./components/categories/categoryList";
+import "./App.css"
 
 function App() {
-  useEffect(() => {
-    const obtenerTareas = async () => {
-      try {
-        const response = await getAll();
-
-        console.log('Respuesta de tareas:', response);
-      } catch (error) {
-        console.error('Error al obtener las tareas:', error);
-      }
-    };
-
-    obtenerTareas();
-  }, []);
-
   return (
     <>
-      <h1>Hola Mundo</h1>
+      <h1>ToDoList App</h1>
+
+      <CategoryList/>
+
     </>
   );
 }

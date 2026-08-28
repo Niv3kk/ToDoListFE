@@ -1,5 +1,4 @@
-import { API_URL, HEADERS, handleResponse } from "./api.service"
-
+import {API_URL, HEADERS, handleResponse} from "./api.service"
 
 export async function getAll() {
     const response = await fetch(API_URL, {
@@ -9,5 +8,6 @@ export async function getAll() {
 
     const data = await handleResponse(response);
 
-    return data;
+    return data.tags?.data || data;
+
 }
