@@ -1,21 +1,13 @@
-const API_URL = 'http://127.0.0.1:8000/api/categories';
+import {API_URL, HEADERS, handleResponse} from "./api.service"
 
 export async function getAll() {
     const response = await fetch(API_URL, {
         method: 'GET',
-        headers: {
-            Accept: 'application/json',
-        },
+        headers: HEADERS
     });
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
+    const data = await handleResponse(response);
 
-        throw new Error(
-            error.message ||
-            `Error al obtener las categorías. Estado: ${response.status}`
-        );
-    }
+    return data.tags?.data || data;
 
-    return response.json();
 }
