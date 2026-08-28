@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAll } from '../../services/category.service';
 import "../../styles/categoryList.css"
 
-function CategoryList() {
+function CategoryList({refreshKey}) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ function CategoryList() {
         };
 
         loadCategories();
-    }, []);
+    }, [refreshKey]);
 
     if (loading) {
         return <p>Cargando categorías...</p>;

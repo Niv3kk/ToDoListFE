@@ -1,4 +1,6 @@
-const API_URL = 'http://127.0.0.1:8000/api/tasks';
+const API_URL = 'http://127.0.0.1:8000/api';
+const URL_TAG = `${API_URL}/tags`;
+const URL_CATEGORY = `${API_URL}/categories`;
 
 const HEADERS = {
     'Accept': 'application/json',
@@ -18,4 +20,4 @@ const handleResponse = async (response) => {
     }
 };
 
-export { API_URL, HEADERS, handleResponse };
+export { API_URL, HEADERS, handleResponse, URL_TAG, URL_CATEGORY };

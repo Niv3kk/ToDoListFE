@@ -1,13 +1,46 @@
-import {API_URL, HEADERS, handleResponse} from "./api.service"
+import { URL_CATEGORY, HEADERS } from "./api.service"
 
 export async function getAll() {
-    const response = await fetch(API_URL, {
+    const response = await fetch(URL_CATEGORY, {
         method: 'GET',
-        headers: HEADERS
+        headers: {
+            Accept: 'application/json',
+        },
     });
 
-    const data = await handleResponse(response);
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
 
-    return data.tags?.data || data;
+        throw new Error(
+            error.message ||
+            `Error al obtener las categorías. Estado: ${response.status}`
+        );
+    }
 
+    return response.json();
+
+}
+
+
+export async function create(category) {
+    const response = await fetch(URL_CATEGORY, {
+        method: 'POST',
+        headers: {
+            ...HEADERS,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(category),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw new Error(
+            data?.message ||
+            `Ocurrió un error al crear la categoría. Estado: ${response.status}`
+        );
+    }
+
+    return data;
 }
