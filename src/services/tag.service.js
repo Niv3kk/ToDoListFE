@@ -1,11 +1,12 @@
 import {
-    URL_TASK,
+    URL_TAG,
     HEADERS,
     handleResponse,
 } from './api.service';
 
+
 export async function getAll() {
-    const response = await fetch(URL_TASK, {
+    const response = await fetch(URL_TAG, {
         method: 'GET',
         headers: HEADERS,
     });
@@ -13,28 +14,9 @@ export async function getAll() {
     return handleResponse(response);
 }
 
-export async function create(task) {
-    const response = await fetch(URL_TASK, {
-        method: 'POST',
-        headers: HEADERS,
-        body: JSON.stringify(task),
-    });
-
-    return handleResponse(response);
-}
-
-export async function update(id, task) {
-    const response = await fetch(`${URL_TASK}/${id}`, {
-        method: 'PUT',
-        headers: HEADERS,
-        body: JSON.stringify(task),
-    });
-
-    return handleResponse(response);
-}
 
 export async function getOne(id) {
-    const response = await fetch(`${URL_TASK}/${id}`, {
+    const response = await fetch(`${URL_TAG}/${id}`, {
         method: 'GET',
         headers: HEADERS,
     });
@@ -42,8 +24,31 @@ export async function getOne(id) {
     return handleResponse(response);
 }
 
+
+export async function create(tag) {
+    const response = await fetch(URL_TAG, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(tag),
+    });
+
+    return handleResponse(response);
+}
+
+
+export async function update(id, tag) {
+    const response = await fetch(`${URL_TAG}/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
+        body: JSON.stringify(tag),
+    });
+
+    return handleResponse(response);
+}
+
+
 export async function remove(id) {
-    const response = await fetch(`${URL_TASK}/${id}`, {
+    const response = await fetch(`${URL_TAG}/${id}`, {
         method: 'DELETE',
         headers: HEADERS,
     });
