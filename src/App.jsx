@@ -6,6 +6,7 @@ import CategoryList from './components/categories/categoryList';
 import ConfirmModal from './components/common/confirmModal';
 import CategoryShow from './components/categories/categoryShow';
 import TagSection from './components/tags/tagSection';
+import TaskSection from './components/tasks/taskSection';
 
 import { remove } from './services/category.service';
 
@@ -83,7 +84,9 @@ function App() {
   return (
     <main className="app-container">
       <h1>To-Do App</h1>
-
+      
+      <TaskSection/>
+      
       <div className="category-grid">
         <CategoryCreate
           onCreated={handleCategoryCreated}
