@@ -32,3 +32,12 @@ export async function update(id, category) {
 
     return handleResponse(response);
 }
+
+export async function remove(id) {
+    const response = await fetch(`${URL_CATEGORY}/${id}`, {
+        method: 'DELETE',
+        headers: HEADERS,
+    });
+
+    return handleResponse(response);
+}
