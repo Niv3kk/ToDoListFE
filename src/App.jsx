@@ -1,138 +1,197 @@
 import { useState } from 'react';
 
-import CategoryCreate from './components/categories/categoryCreate';
-import CategoryEdit from './components/categories/categoryEdit';
-import CategoryList from './components/categories/categoryList';
-import ConfirmModal from './components/common/confirmModal';
-import CategoryShow from './components/categories/categoryShow';
+import Login from './components/auth/login';
+
+import TaskSection from './components/tasks/TaskSection';
+
+import CategoryCreate from './components/categories/CategoryCreate';
+import CategoryEdit from './components/categories/CategoryEdit';
+import CategoryList from './components/categories/CategoryList';
+import CategoryShow from './components/categories/CategoryShow';
+
 import TagSection from './components/tags/tagSection';
-import TaskSection from './components/tasks/taskSection';
+
+import ConfirmModal from './components/common/ConfirmModal';
 
 import { remove } from './services/category.service';
 
 import './styles/categories.css';
 
+
 function App() {
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
-  const [categoryToShow, setCategoryToShow] = useState(null);
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
 
-  const refreshCategories = () => {
-    setRefreshKey((current) => current + 1);
-  };
+    const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleCategoryCreated = () => {
-    refreshCategories();
-  };
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const handleEdit = (category) => {
-    setSelectedCategory(category);
-  };
+    const [categoryToShow, setCategoryToShow] = useState(null);
 
-  const handleCategoryUpdated = () => {
-    setSelectedCategory(null);
-    refreshCategories();
-  };
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  const handleCancelEdit = () => {
-    setSelectedCategory(null);
-  };
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const handleDeleteClick = (category) => {
-    setDeleteError(null);
-    setCategoryToDelete(category);
-  };
+    const [deleteError, setDeleteError] = useState(null);
 
-  const handleCancelDelete = () => {
-    setCategoryToDelete(null);
-    setDeleteError(null);
-  };
 
-  const handleConfirmDelete = async () => {
-    if (!categoryToDelete) {
-      return;
+    const refreshCategories = () => {
+        setRefreshKey((current) => current + 1);
+    };
+
+    const handleCategoryCreated = () => {
+        refreshCategories();
+    };
+
+    const handleEdit = (category) => {
+        setCategoryToShow(null);
+        setSelectedCategory(category);
+    };
+
+    const handleCategoryUpdated = () => {
+        setSelectedCategory(null);
+        refreshCategories();
+    };
+
+    const handleCancelEdit = () => {
+        setSelectedCategory(null);
+    };
+
+    const handleShow = (category) => {
+        setSelectedCategory(null);
+        setCategoryToShow(category.id);
+    };
+
+    const handleCloseShow = () => {
+        setCategoryToShow(null);
+    };
+
+    const handleDeleteClick = (category) => {
+        setDeleteError(null);
+        setCategoryToDelete(category);
+    };
+
+
+    const handleCancelDelete = () => {
+        setCategoryToDelete(null);
+        setDeleteError(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!categoryToDelete) {
+            return;
+        }
+
+        try {
+            setDeleteLoading(true);
+            setDeleteError(null);
+
+            await remove(categoryToDelete.id);
+
+            if (
+                selectedCategory?.id === categoryToDelete.id
+            ) {
+                setSelectedCategory(null);
+            }
+
+            if (
+                categoryToShow === categoryToDelete.id
+            ) {
+                setCategoryToShow(null);
+            }
+
+            setCategoryToDelete(null);
+
+            refreshCategories();
+
+        } catch (error) {
+            setDeleteError(error.message);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
+
+    if (!isLoggedIn) {
+        return (
+            <Login onLogin={handleLogin} />
+        );
     }
 
-    try {
-      setDeleteLoading(true);
-      setDeleteError(null);
+    return (
+        <main className="app-container">
 
-      await remove(categoryToDelete.id);
+            <h1>To-Do App</h1>
 
-      setCategoryToDelete(null);
+            <TaskSection />
 
-      refreshCategories();
-    } catch (error) {
-      setDeleteError(error.message);
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
-  const handleShow = (category) => {
-    setCategoryToShow(category.id);
-  };
+            <section className="category-section">
 
-  const handleCloseShow = () => {
-    setCategoryToShow(null);
-  };
+                <div className="module-header">
+                    <h1>Módulo de categorías</h1>
 
-  return (
-    <main className="app-container">
-      <h1>To-Do App</h1>
-      
-      <TaskSection/>
-      
-      <div className="category-grid">
-        <CategoryCreate
-          onCreated={handleCategoryCreated}
-        />
+                    <p>
+                        Administra las categorías de las tareas.
+                    </p>
+                </div>
 
-        {selectedCategory && (
-          <CategoryEdit
-            category={selectedCategory}
-            onUpdated={handleCategoryUpdated}
-            onCancel={handleCancelEdit}
-          />
-        )}
-      </div>
 
-      {categoryToShow && (
-        <CategoryShow
-          categoryId={categoryToShow}
-          onClose={handleCloseShow}
-        />
-      )}
+                <div className="category-grid">
 
-      {deleteError && (
-        <p className="message message-error delete-error">
-          {deleteError}
-        </p>
-      )}
+                    <CategoryCreate
+                        onCreated={handleCategoryCreated}
+                    />
 
-      <CategoryList
-        refreshKey={refreshKey}
-        onShow={handleShow}
-        onEdit={handleEdit}
-        onDelete={handleDeleteClick}
-      />
+                    {selectedCategory && (
+                        <CategoryEdit
+                            category={selectedCategory}
+                            onUpdated={handleCategoryUpdated}
+                            onCancel={handleCancelEdit}
+                        />
+                    )}
 
-      {categoryToDelete && (
-        <ConfirmModal
-          title="Eliminar categoría"
-          message={`¿Estás seguro de eliminar la categoría "${categoryToDelete.name}"?`}
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
-          loading={deleteLoading}
-        />
-      )}
-      <TagSection />
-    </main>
-  );
+                </div>
+
+                {categoryToShow && (
+                    <CategoryShow
+                        categoryId={categoryToShow}
+                        onClose={handleCloseShow}
+                    />
+                )}
+
+                {deleteError && (
+                    <p className="message message-error delete-error">
+                        {deleteError}
+                    </p>
+                )}
+
+                <CategoryList
+                    refreshKey={refreshKey}
+                    onShow={handleShow}
+                    onEdit={handleEdit}
+                    onDelete={handleDeleteClick}
+                />
+
+                {categoryToDelete && (
+                    <ConfirmModal
+                        title="Eliminar categoría"
+                        message={`¿Estás seguro de eliminar la categoría "${categoryToDelete.name}"?`}
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                        loading={deleteLoading}
+                    />
+                )}
+
+            </section>
+
+            <TagSection />
+
+        </main>
+    );
 }
+
 
 export default App;
