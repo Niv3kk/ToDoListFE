@@ -1,25 +1,58 @@
 import { useState } from 'react';
-import CategoryList from "./components/categories/categoryList";
-import CategoryCreate from "./components/categories/categoryCreate";
-import "./App.css"
+import CategoryCreate from './components/categories/categoryCreate';
+import CategoryEdit from './components/categories/categoryEdit';
+import CategoryList from './components/categories/categoryList';
+import './styles/categories.css';
 
 function App() {
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const [refreshKey, setRefreshKey] = useState(0);
+    const refreshCategories = () => {
+        setRefreshKey((current) => current + 1);
+    };
 
-  const handleCategoryCreated = () => {
-    setRefreshKey((current) => current + 1);
-  };
+    const handleCategoryCreated = () => {
+        refreshCategories();
+    };
 
-  return (
-    <>
-      <h1>ToDoList App</h1>
+    const handleEdit = (category) => {
+        setSelectedCategory(category);
+    };
 
-      <CategoryCreate onCreated={handleCategoryCreated}/>
-      <CategoryList refreshKey={refreshKey}/>
+    const handleCategoryUpdated = () => {
+        setSelectedCategory(null);
+        refreshCategories();
+    };
 
-    </>
-  );
+    const handleCancelEdit = () => {
+        setSelectedCategory(null);
+    };
+
+    return (
+        <main className="app-container">
+            <h1>To-Do App</h1>
+
+            <div className="category-grid">
+                <CategoryCreate
+                    onCreated={handleCategoryCreated}
+                />
+
+                {selectedCategory && (
+                    <CategoryEdit
+                        category={selectedCategory}
+                        onUpdated={handleCategoryUpdated}
+                        onCancel={handleCancelEdit}
+                    />
+                )}
+            </div>
+
+            <CategoryList
+                refreshKey={refreshKey}
+                onEdit={handleEdit}
+            />
+        </main>
+    );
 }
 
 export default App;
