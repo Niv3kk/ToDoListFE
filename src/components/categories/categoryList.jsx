@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../services/category.service';
 
-function CategoryList({ refreshKey, onEdit, onDelete, }) {
+function CategoryList({ refreshKey, onEdit, onDelete, onShow, }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -60,6 +60,12 @@ function CategoryList({ refreshKey, onEdit, onDelete, }) {
 
                                 <td>
                                     <div className="table-actions">
+                                        <button
+                                            className="btn btn-info"
+                                            onClick={() => onShow(category)}
+                                        >
+                                            Ver
+                                        </button>
                                         <button
                                             className="btn btn-warning"
                                             onClick={() =>

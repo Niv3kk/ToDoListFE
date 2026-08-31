@@ -41,3 +41,12 @@ export async function remove(id) {
 
     return handleResponse(response);
 }
+
+export async function getOne(id) {
+    const response = await fetch(`${URL_CATEGORY}/${id}`, {
+        method: 'GET',
+        headers: HEADERS,
+    });
+
+    return handleResponse(response);
+}
