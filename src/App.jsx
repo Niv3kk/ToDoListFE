@@ -4,113 +4,130 @@ import CategoryCreate from './components/categories/categoryCreate';
 import CategoryEdit from './components/categories/categoryEdit';
 import CategoryList from './components/categories/categoryList';
 import ConfirmModal from './components/common/confirmModal';
+import CategoryShow from './components/categories/categoryShow';
 
 import { remove } from './services/category.service';
 
 import './styles/categories.css';
 
 function App() {
-    const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const [categoryToDelete, setCategoryToDelete] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
-    const [deleteError, setDeleteError] = useState(null);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [categoryToShow, setCategoryToShow] = useState(null);
 
-    const refreshCategories = () => {
-        setRefreshKey((current) => current + 1);
-    };
+  const refreshCategories = () => {
+    setRefreshKey((current) => current + 1);
+  };
 
-    const handleCategoryCreated = () => {
-        refreshCategories();
-    };
+  const handleCategoryCreated = () => {
+    refreshCategories();
+  };
 
-    const handleEdit = (category) => {
-        setSelectedCategory(category);
-    };
+  const handleEdit = (category) => {
+    setSelectedCategory(category);
+  };
 
-    const handleCategoryUpdated = () => {
-        setSelectedCategory(null);
-        refreshCategories();
-    };
+  const handleCategoryUpdated = () => {
+    setSelectedCategory(null);
+    refreshCategories();
+  };
 
-    const handleCancelEdit = () => {
-        setSelectedCategory(null);
-    };
+  const handleCancelEdit = () => {
+    setSelectedCategory(null);
+  };
 
-    const handleDeleteClick = (category) => {
-        setDeleteError(null);
-        setCategoryToDelete(category);
-    };
+  const handleDeleteClick = (category) => {
+    setDeleteError(null);
+    setCategoryToDelete(category);
+  };
 
-    const handleCancelDelete = () => {
-        setCategoryToDelete(null);
-        setDeleteError(null);
-    };
+  const handleCancelDelete = () => {
+    setCategoryToDelete(null);
+    setDeleteError(null);
+  };
 
-    const handleConfirmDelete = async () => {
-        if (!categoryToDelete) {
-            return;
-        }
+  const handleConfirmDelete = async () => {
+    if (!categoryToDelete) {
+      return;
+    }
 
-        try {
-            setDeleteLoading(true);
-            setDeleteError(null);
+    try {
+      setDeleteLoading(true);
+      setDeleteError(null);
 
-            await remove(categoryToDelete.id);
+      await remove(categoryToDelete.id);
 
-            setCategoryToDelete(null);
+      setCategoryToDelete(null);
 
-            refreshCategories();
-        } catch (error) {
-            setDeleteError(error.message);
-        } finally {
-            setDeleteLoading(false);
-        }
-    };
+      refreshCategories();
+    } catch (error) {
+      setDeleteError(error.message);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+  const handleShow = (category) => {
+    setCategoryToShow(category.id);
+  };
 
-    return (
-        <main className="app-container">
-            <h1>To-Do App</h1>
+  const handleCloseShow = () => {
+    setCategoryToShow(null);
+  };
 
-            <div className="category-grid">
-                <CategoryCreate
-                    onCreated={handleCategoryCreated}
-                />
+  return (
+    <main className="app-container">
+      <h1>To-Do App</h1>
 
-                {selectedCategory && (
-                    <CategoryEdit
-                        category={selectedCategory}
-                        onUpdated={handleCategoryUpdated}
-                        onCancel={handleCancelEdit}
-                    />
-                )}
-            </div>
+      <div className="category-grid">
+        <CategoryCreate
+          onCreated={handleCategoryCreated}
+        />
 
-            {deleteError && (
-                <p className="message message-error delete-error">
-                    {deleteError}
-                </p>
-            )}
+        {selectedCategory && (
+          <CategoryEdit
+            category={selectedCategory}
+            onUpdated={handleCategoryUpdated}
+            onCancel={handleCancelEdit}
+          />
+        )}
+      </div>
 
-            <CategoryList
-                refreshKey={refreshKey}
-                onEdit={handleEdit}
-                onDelete={handleDeleteClick}
-            />
+      {categoryToShow && (
+        <CategoryShow
+          categoryId={categoryToShow}
+          onClose={handleCloseShow}
+        />
+      )}
 
-            {categoryToDelete && (
-                <ConfirmModal
-                    title="Eliminar categoría"
-                    message={`¿Estás seguro de eliminar la categoría "${categoryToDelete.name}"?`}
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                    loading={deleteLoading}
-                />
-            )}
-        </main>
-    );
+      {deleteError && (
+        <p className="message message-error delete-error">
+          {deleteError}
+        </p>
+      )}
+
+      <CategoryList
+        refreshKey={refreshKey}
+        onShow={handleShow}
+        onEdit={handleEdit}
+        onDelete={handleDeleteClick}
+      />
+
+      {categoryToDelete && (
+        <ConfirmModal
+          title="Eliminar categoría"
+          message={`¿Estás seguro de eliminar la categoría "${categoryToDelete.name}"?`}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          loading={deleteLoading}
+        />
+      )}
+    </main>
+  );
 }
 
 export default App;
