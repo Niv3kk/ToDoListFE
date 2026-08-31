@@ -32,3 +32,12 @@ export async function update(id, task) {
 
     return handleResponse(response);
 }
+
+export async function getOne(id) {
+    const response = await fetch(`${URL_TASK}/${id}`, {
+        method: 'GET',
+        headers: HEADERS,
+    });
+
+    return handleResponse(response);
+}

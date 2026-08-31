@@ -5,6 +5,7 @@ function TaskList({
     refreshKey,
     onCreate,
     onEdit,
+    onShow,
 }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -137,6 +138,14 @@ function TaskList({
 
                                     <td>
                                         <div className="table-actions">
+                                            <button
+                                                type="button"
+                                                className="btn btn-info"
+                                                onClick={() => onShow(task)}
+                                            >
+                                                Ver
+                                            </button>
+                                            
                                             <button
                                                 type="button"
                                                 className="btn btn-warning"
