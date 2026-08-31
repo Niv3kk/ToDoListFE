@@ -41,3 +41,12 @@ export async function getOne(id) {
 
     return handleResponse(response);
 }
+
+export async function remove(id) {
+    const response = await fetch(`${URL_TASK}/${id}`, {
+        method: 'DELETE',
+        headers: HEADERS,
+    });
+
+    return handleResponse(response);
+}
