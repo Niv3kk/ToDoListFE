@@ -1,12 +1,22 @@
 import { useState } from 'react';
+
 import CategoryCreate from './components/categories/categoryCreate';
 import CategoryEdit from './components/categories/categoryEdit';
 import CategoryList from './components/categories/categoryList';
+import ConfirmModal from './components/common/confirmModal';
+
+import { remove } from './services/category.service';
+
 import './styles/categories.css';
 
 function App() {
     const [refreshKey, setRefreshKey] = useState(0);
+
     const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
 
     const refreshCategories = () => {
         setRefreshKey((current) => current + 1);
@@ -29,6 +39,37 @@ function App() {
         setSelectedCategory(null);
     };
 
+    const handleDeleteClick = (category) => {
+        setDeleteError(null);
+        setCategoryToDelete(category);
+    };
+
+    const handleCancelDelete = () => {
+        setCategoryToDelete(null);
+        setDeleteError(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!categoryToDelete) {
+            return;
+        }
+
+        try {
+            setDeleteLoading(true);
+            setDeleteError(null);
+
+            await remove(categoryToDelete.id);
+
+            setCategoryToDelete(null);
+
+            refreshCategories();
+        } catch (error) {
+            setDeleteError(error.message);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
+
     return (
         <main className="app-container">
             <h1>To-Do App</h1>
@@ -47,10 +88,27 @@ function App() {
                 )}
             </div>
 
+            {deleteError && (
+                <p className="message message-error delete-error">
+                    {deleteError}
+                </p>
+            )}
+
             <CategoryList
                 refreshKey={refreshKey}
                 onEdit={handleEdit}
+                onDelete={handleDeleteClick}
             />
+
+            {categoryToDelete && (
+                <ConfirmModal
+                    title="Eliminar categoría"
+                    message={`¿Estás seguro de eliminar la categoría "${categoryToDelete.name}"?`}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    loading={deleteLoading}
+                />
+            )}
         </main>
     );
 }
