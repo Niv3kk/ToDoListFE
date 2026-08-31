@@ -1,13 +1,34 @@
-import { API_URL, HEADERS, handleResponse } from "./api.service"
-
+import {
+    URL_TASK,
+    HEADERS,
+    handleResponse,
+} from './api.service';
 
 export async function getAll() {
-    const response = await fetch(API_URL, {
+    const response = await fetch(URL_TASK, {
         method: 'GET',
-        headers: HEADERS
+        headers: HEADERS,
     });
 
-    const data = await handleResponse(response);
+    return handleResponse(response);
+}
 
-    return data;
+export async function create(task) {
+    const response = await fetch(URL_TASK, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(task),
+    });
+
+    return handleResponse(response);
+}
+
+export async function update(id, task) {
+    const response = await fetch(`${URL_TASK}/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
+        body: JSON.stringify(task),
+    });
+
+    return handleResponse(response);
 }

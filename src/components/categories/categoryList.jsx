@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../services/category.service';
-import "../../styles/categoryList.css"
 
-function CategoryList({refreshKey}) {
+function CategoryList({ refreshKey, onEdit, onDelete, onShow, }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,29 +31,63 @@ function CategoryList({refreshKey}) {
     }
 
     return (
-        <div className="categoryList">
+        <section className="category-list-section">
             <h2>Categorías</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Cantidad de tareas</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {categories.map((category) => (
-                        <tr key={category.id}>
-                            <td>{category.id}</td>
-                            <td>{category.name}</td>
-                            <td>{category.tasks_count}</td>
+            <div className="table-wrapper">
+                <table className="category-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Cantidad de tareas</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        {categories.map((category) => (
+                            <tr key={category.id}>
+                                <td>{category.id}</td>
+
+                                <td>
+                                    {category.name}
+                                </td>
+
+                                <td>
+                                    {category.tasks_count}
+                                </td>
+
+                                <td>
+                                    <div className="table-actions">
+                                        <button
+                                            className="btn btn-info"
+                                            onClick={() => onShow(category)}
+                                        >
+                                            Ver
+                                        </button>
+                                        <button
+                                            className="btn btn-warning"
+                                            onClick={() =>
+                                                onEdit(category)
+                                            }
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={() => onDelete(category)}
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     );
 }
 
