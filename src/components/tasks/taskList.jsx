@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
+
 import { getAll } from '../../services/task.service';
+
+import Pagination from '../common/pagination';
+
+const ITEMS_PER_PAGE = 5;
 
 function TaskList({
     refreshKey,
@@ -9,8 +14,12 @@ function TaskList({
     onDelete,
 }) {
     const [tasks, setTasks] = useState([]);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         const loadTasks = async () => {
@@ -21,6 +30,7 @@ function TaskList({
                 const response = await getAll();
 
                 setTasks(response.data);
+
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -29,11 +39,41 @@ function TaskList({
         };
 
         loadTasks();
+
     }, [refreshKey]);
+
+    const totalPages = Math.ceil(
+        tasks.length / ITEMS_PER_PAGE
+    );
+
+
+    const startIndex =
+        (currentPage - 1) * ITEMS_PER_PAGE;
+
+
+    const paginatedTasks = tasks.slice(
+        startIndex,
+        startIndex + ITEMS_PER_PAGE
+    );
+
+    useEffect(() => {
+        const availablePages = Math.max(
+            1,
+            Math.ceil(
+                tasks.length / ITEMS_PER_PAGE
+            )
+        );
+
+        if (currentPage > availablePages) {
+            setCurrentPage(availablePages);
+        }
+
+    }, [tasks, currentPage]);
 
     if (loading) {
         return <p>Cargando tareas...</p>;
     }
+
 
     if (error) {
         return (
@@ -45,7 +85,9 @@ function TaskList({
 
     return (
         <section className="task-list-section">
+
             <div className="section-heading">
+
                 <div>
                     <span className="section-label">
                         Gestión
@@ -54,6 +96,7 @@ function TaskList({
                     <h2>Tareas</h2>
                 </div>
 
+
                 <button
                     type="button"
                     className="btn btn-primary"
@@ -61,10 +104,14 @@ function TaskList({
                 >
                     + Nueva tarea
                 </button>
+
             </div>
 
+
             <div className="table-wrapper">
+
                 <table className="task-table">
+
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -76,8 +123,11 @@ function TaskList({
                         </tr>
                     </thead>
 
+
                     <tbody>
+
                         {tasks.length === 0 ? (
+
                             <tr>
                                 <td
                                     colSpan="6"
@@ -86,12 +136,17 @@ function TaskList({
                                     No existen tareas registradas.
                                 </td>
                             </tr>
+
                         ) : (
-                            tasks.map((task) => (
+
+                            paginatedTasks.map((task) => (
+
                                 <tr key={task.id}>
+
                                     <td>
                                         {task.id}
                                     </td>
+
 
                                     <td>
                                         <strong>
@@ -99,31 +154,43 @@ function TaskList({
                                         </strong>
                                     </td>
 
+
                                     <td>
                                         {task.category?.name ||
                                             'Sin categoría'}
                                     </td>
 
+
                                     <td>
                                         <div className="task-tags">
+
                                             {task.tags?.length > 0 ? (
+
                                                 task.tags.map((tag) => (
+
                                                     <span
                                                         key={tag.id}
                                                         className="task-tag"
                                                     >
                                                         {tag.name}
                                                     </span>
+
                                                 ))
+
                                             ) : (
+
                                                 <span>
                                                     Sin etiquetas
                                                 </span>
+
                                             )}
+
                                         </div>
                                     </td>
 
+
                                     <td>
+
                                         <span
                                             className={
                                                 task.is_completed
@@ -135,17 +202,24 @@ function TaskList({
                                                 ? 'Completada'
                                                 : 'Pendiente'}
                                         </span>
+
                                     </td>
 
+
                                     <td>
+
                                         <div className="table-actions">
+
                                             <button
                                                 type="button"
                                                 className="btn btn-info"
-                                                onClick={() => onShow(task)}
+                                                onClick={() =>
+                                                    onShow(task)
+                                                }
                                             >
                                                 Ver
                                             </button>
+
 
                                             <button
                                                 type="button"
@@ -157,21 +231,40 @@ function TaskList({
                                                 Editar
                                             </button>
 
+
                                             <button
                                                 type="button"
                                                 className="btn btn-danger"
-                                                onClick={() => onDelete(task)}
+                                                onClick={() =>
+                                                    onDelete(task)
+                                                }
                                             >
                                                 Eliminar
                                             </button>
+
                                         </div>
+
                                     </td>
+
                                 </tr>
+
                             ))
+
                         )}
+
                     </tbody>
+
                 </table>
+
             </div>
+
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+
         </section>
     );
 }
