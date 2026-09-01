@@ -1,46 +1,43 @@
-import { URL_CATEGORY, HEADERS } from "./api.service"
+import {
+    URL_CATEGORY,
+    apiFetch,
+} from './api.service';
+
 
 export async function getAll() {
-    const response = await fetch(URL_CATEGORY, {
+    return apiFetch(URL_CATEGORY, {
         method: 'GET',
-        headers: {
-            Accept: 'application/json',
-        },
     });
+}
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
 
-        throw new Error(
-            error.message ||
-            `Error al obtener las categorías. Estado: ${response.status}`
-        );
-    }
-
-    return response.json();
-
+export async function getOne(id) {
+    return apiFetch(`${URL_CATEGORY}/${id}`, {
+        method: 'GET',
+    });
 }
 
 
 export async function create(category) {
-    const response = await fetch(URL_CATEGORY, {
+    return apiFetch(URL_CATEGORY, {
         method: 'POST',
-        headers: {
-            ...HEADERS,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
+
         body: JSON.stringify(category),
     });
+}
 
-    const data = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
-        throw new Error(
-            data?.message ||
-            `Ocurrió un error al crear la categoría. Estado: ${response.status}`
-        );
-    }
+export async function update(id, category) {
+    return apiFetch(`${URL_CATEGORY}/${id}`, {
+        method: 'PUT',
 
-    return data;
+        body: JSON.stringify(category),
+    });
+}
+
+
+export async function remove(id) {
+    return apiFetch(`${URL_CATEGORY}/${id}`, {
+        method: 'DELETE',
+    });
 }
