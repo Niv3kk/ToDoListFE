@@ -1,13 +1,43 @@
-import { API_URL, HEADERS, handleResponse } from "./api.service"
+import {
+    URL_TASK,
+    apiFetch,
+} from './api.service';
 
 
 export async function getAll() {
-    const response = await fetch(API_URL, {
+    return apiFetch(URL_TASK, {
         method: 'GET',
-        headers: HEADERS
     });
+}
 
-    const data = await handleResponse(response);
 
-    return data;
+export async function getOne(id) {
+    return apiFetch(`${URL_TASK}/${id}`, {
+        method: 'GET',
+    });
+}
+
+
+export async function create(task) {
+    return apiFetch(URL_TASK, {
+        method: 'POST',
+
+        body: JSON.stringify(task),
+    });
+}
+
+
+export async function update(id, task) {
+    return apiFetch(`${URL_TASK}/${id}`, {
+        method: 'PUT',
+
+        body: JSON.stringify(task),
+    });
+}
+
+
+export async function remove(id) {
+    return apiFetch(`${URL_TASK}/${id}`, {
+        method: 'DELETE',
+    });
 }

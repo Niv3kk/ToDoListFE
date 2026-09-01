@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { create } from '../../services/category.service';
+import { create } from '../../services/tag.service';
 
-function CategoryCreate({ onCreated }) {
+function TagCreate({ onCreated }) {
     const [name, setName] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -14,7 +14,7 @@ function CategoryCreate({ onCreated }) {
         setSuccess(null);
 
         if (!name.trim()) {
-            setError('El nombre de la categoría es obligatorio.');
+            setError('El nombre de la etiqueta es obligatorio.');
             return;
         }
 
@@ -25,41 +25,42 @@ function CategoryCreate({ onCreated }) {
                 name: name.trim(),
             });
 
-            setSuccess(response.message || 'Categoría creada correctamente.');
+            setSuccess(
+                response.message ||
+                'Etiqueta creada correctamente.'
+            );
+
             setName('');
 
-            if (onCreated) {
-                onCreated();
-            }
+            onCreated();
         } catch (error) {
-
-            throw new Error('Ocurrió un error al crear la categoría.');
-
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="category-card">
-            <h2>Crear categoría</h2>
+        <div className="tag-card">
+            <h2>Crear etiqueta</h2>
 
             <form
                 onSubmit={handleSubmit}
-                className="category-form"
+                className="tag-form"
             >
                 <div className="form-group">
-                    <label htmlFor="name">
+                    <label htmlFor="tag-name">
                         Nombre
                     </label>
 
                     <input
+                        id="tag-name"
                         type="text"
-                        id="name"
                         value={name}
                         onChange={(event) =>
                             setName(event.target.value)
                         }
+                        placeholder="Ej: Urgente"
                     />
                 </div>
 
@@ -75,20 +76,18 @@ function CategoryCreate({ onCreated }) {
                     </p>
                 )}
 
-                <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={loading}
-                    >
-                        {loading
-                            ? 'Guardando...'
-                            : 'Crear categoría'}
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                >
+                    {loading
+                        ? 'Guardando...'
+                        : 'Crear etiqueta'}
+                </button>
             </form>
         </div>
     );
 }
 
-export default CategoryCreate;
+export default TagCreate;
