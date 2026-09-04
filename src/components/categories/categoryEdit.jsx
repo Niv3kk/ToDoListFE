@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import { create } from '../../services/category.service';
+import { useEffect, useState } from 'react';
+import { update } from '../../services/category.service';
 
-function CategoryCreate({ onCreated }) {
+function CategoryEdit({ category, onUpdated, onCancel }) {
     const [name, setName] = useState('');
     const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (category) {
+            setName(category.name);
+        }
+    }, [category]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError(null);
-        setSuccess(null);
 
         if (!name.trim()) {
             setError('El nombre de la categoría es obligatorio.');
@@ -21,41 +25,38 @@ function CategoryCreate({ onCreated }) {
         try {
             setLoading(true);
 
-            const response = await create({
+            await update(category.id, {
                 name: name.trim(),
             });
 
-            setSuccess(response.message || 'Categoría creada correctamente.');
-            setName('');
-
-            if (onCreated) {
-                onCreated();
-            }
+            onUpdated();
         } catch (error) {
-
-            throw new Error('Ocurrió un error al crear la categoría.');
-
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
 
+    if (!category) {
+        return null;
+    }
+
     return (
         <div className="category-card">
-            <h2>Crear categoría</h2>
+            <h2>Editar categoría</h2>
 
             <form
                 onSubmit={handleSubmit}
                 className="category-form"
             >
                 <div className="form-group">
-                    <label htmlFor="name">
+                    <label htmlFor="edit-category-name">
                         Nombre
                     </label>
 
                     <input
                         type="text"
-                        id="name"
+                        id="edit-category-name"
                         value={name}
                         onChange={(event) =>
                             setName(event.target.value)
@@ -69,12 +70,6 @@ function CategoryCreate({ onCreated }) {
                     </p>
                 )}
 
-                {success && (
-                    <p className="message message-success">
-                        {success}
-                    </p>
-                )}
-
                 <div className="form-actions">
                     <button
                         type="submit"
@@ -82,8 +77,16 @@ function CategoryCreate({ onCreated }) {
                         disabled={loading}
                     >
                         {loading
-                            ? 'Guardando...'
-                            : 'Crear categoría'}
+                            ? 'Actualizando...'
+                            : 'Actualizar'}
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={onCancel}
+                    >
+                        Cancelar
                     </button>
                 </div>
             </form>
@@ -91,4 +94,4 @@ function CategoryCreate({ onCreated }) {
     );
 }
 
-export default CategoryCreate;
+export default CategoryEdit;
