@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../services/category.service';
 
-function CategoryList({ refreshKey, onEdit }) {
+function CategoryList({ refreshKey, onEdit, onDelete, }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -59,14 +59,22 @@ function CategoryList({ refreshKey, onEdit }) {
                                 </td>
 
                                 <td>
-                                    <button
-                                        className="btn btn-warning"
-                                        onClick={() =>
-                                            onEdit(category)
-                                        }
-                                    >
-                                        Editar
-                                    </button>
+                                    <div className="table-actions">
+                                        <button
+                                            className="btn btn-warning"
+                                            onClick={() =>
+                                                onEdit(category)
+                                            }
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={() => onDelete(category)}
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
