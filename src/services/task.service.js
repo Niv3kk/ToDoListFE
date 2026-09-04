@@ -12,3 +12,13 @@ export async function getAll() {
 
     return handleResponse(response);
 }
+
+export async function create(task) {
+    const response = await fetch(URL_TASK, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(task),
+    });
+
+    return handleResponse(response);
+}
