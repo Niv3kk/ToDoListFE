@@ -5,6 +5,7 @@ import CategoryEdit from './components/categories/categoryEdit';
 import CategoryList from './components/categories/categoryList';
 import ConfirmModal from './components/common/confirmModal';
 import CategoryShow from './components/categories/categoryShow';
+import TagSection from './components/tags/tagSection';
 
 import { remove } from './services/category.service';
 
@@ -126,6 +127,7 @@ function App() {
           loading={deleteLoading}
         />
       )}
+      <TagSection />
     </main>
   );
 }
