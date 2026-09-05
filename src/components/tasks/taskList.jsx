@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../services/task.service';
 
-
 function TaskList({
     refreshKey,
     onCreate,
+    onEdit,
 }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
 
     useEffect(() => {
         const loadTasks = async () => {
@@ -20,7 +19,6 @@ function TaskList({
                 const response = await getAll();
 
                 setTasks(response.data);
-
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -31,11 +29,9 @@ function TaskList({
         loadTasks();
     }, [refreshKey]);
 
-
     if (loading) {
         return <p>Cargando tareas...</p>;
     }
-
 
     if (error) {
         return (
@@ -44,7 +40,6 @@ function TaskList({
             </p>
         );
     }
-
 
     return (
         <section className="task-list-section">
@@ -66,7 +61,6 @@ function TaskList({
                 </button>
             </div>
 
-
             <div className="table-wrapper">
                 <table className="task-table">
                     <thead>
@@ -76,6 +70,7 @@ function TaskList({
                             <th>Categoría</th>
                             <th>Etiquetas</th>
                             <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
 
@@ -83,7 +78,7 @@ function TaskList({
                         {tasks.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan="5"
+                                    colSpan="6"
                                     className="empty-table"
                                 >
                                     No existen tareas registradas.
@@ -92,7 +87,9 @@ function TaskList({
                         ) : (
                             tasks.map((task) => (
                                 <tr key={task.id}>
-                                    <td>{task.id}</td>
+                                    <td>
+                                        {task.id}
+                                    </td>
 
                                     <td>
                                         <strong>
@@ -107,14 +104,20 @@ function TaskList({
 
                                     <td>
                                         <div className="task-tags">
-                                            {task.tags?.map((tag) => (
-                                                <span
-                                                    key={tag.id}
-                                                    className="task-tag"
-                                                >
-                                                    {tag.name}
+                                            {task.tags?.length > 0 ? (
+                                                task.tags.map((tag) => (
+                                                    <span
+                                                        key={tag.id}
+                                                        className="task-tag"
+                                                    >
+                                                        {tag.name}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span>
+                                                    Sin etiquetas
                                                 </span>
-                                            ))}
+                                            )}
                                         </div>
                                     </td>
 
@@ -130,6 +133,20 @@ function TaskList({
                                                 ? 'Completada'
                                                 : 'Pendiente'}
                                         </span>
+                                    </td>
+
+                                    <td>
+                                        <div className="table-actions">
+                                            <button
+                                                type="button"
+                                                className="btn btn-warning"
+                                                onClick={() =>
+                                                    onEdit(task)
+                                                }
+                                            >
+                                                Editar
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

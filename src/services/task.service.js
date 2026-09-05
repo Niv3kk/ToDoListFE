@@ -22,3 +22,13 @@ export async function create(task) {
 
     return handleResponse(response);
 }
+
+export async function update(id, task) {
+    const response = await fetch(`${URL_TASK}/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
+        body: JSON.stringify(task),
+    });
+
+    return handleResponse(response);
+}
