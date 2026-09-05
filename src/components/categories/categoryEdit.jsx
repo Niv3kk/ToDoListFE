@@ -17,7 +17,10 @@ function CategoryEdit({ category, onUpdated, onCancel }) {
 
         setError(null);
 
-        if (!name.trim()) {
+        const normalizedName = name.trim();
+        const isEmptyName = normalizedName.length === 0;
+
+        if (isEmptyName) {
             setError('El nombre de la categoría es obligatorio.');
             return;
         }
@@ -26,7 +29,7 @@ function CategoryEdit({ category, onUpdated, onCancel }) {
             setLoading(true);
 
             await update(category.id, {
-                name: name.trim(),
+                name: normalizedName,
             });
 
             onUpdated();
