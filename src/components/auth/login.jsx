@@ -4,6 +4,10 @@ import { login } from '../../services/auth.service';
 
 import '../../styles/auth.css';
 
+
+const isBlank = (value) => value.trim().length === 0;
+
+
 function Login({ onLogin }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -11,32 +15,43 @@ function Login({ onLogin }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError(null);
 
-        if (!email.trim()) {
-            setError('El correo electrónico es obligatorio.');
+
+        if (isBlank(email)) {
+            setError(
+                'El correo electrónico es obligatorio.'
+            );
             return;
         }
 
-        if (!password.trim()) {
-            setError('La contraseña es obligatoria.');
+
+        if (isBlank(password)) {
+            setError(
+                'La contraseña es obligatoria.'
+            );
             return;
         }
+
 
         try {
             setLoading(true);
+
 
             const response = await login({
                 email: email.trim(),
                 password,
             });
 
+
             const token =
                 response.token ??
                 response.access_token;
+
 
             if (!token) {
                 throw new Error(
@@ -44,15 +59,25 @@ function Login({ onLogin }) {
                 );
             }
 
-            localStorage.setItem('token', token);
+
+            localStorage.setItem(
+                'token',
+                token
+            );
+
 
             if (onLogin) {
                 onLogin();
             }
+
         } catch (error) {
+
             setError(error.message);
+
         } finally {
+
             setLoading(false);
+
         }
     };
 
