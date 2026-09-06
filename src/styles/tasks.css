@@ -205,3 +205,37 @@
         flex-direction: column;
     }
 }
+
+.task-detail {
+    margin-bottom: 32px;
+}
+
+.task-detail-content {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.task-detail .detail-item {
+    min-height: 90px;
+}
+
+.detail-item-full {
+    grid-column: 1 / -1;
+}
+
+.task-detail .task-tags {
+    margin-top: 4px;
+}
+
+@media (max-width: 800px) {
+    .task-detail-content {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-item-full {
+        grid-column: auto;
+    }
+}
