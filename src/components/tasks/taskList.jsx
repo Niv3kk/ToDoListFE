@@ -6,6 +6,7 @@ function TaskList({
     onCreate,
     onEdit,
     onShow,
+    onDelete,
 }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -145,7 +146,7 @@ function TaskList({
                                             >
                                                 Ver
                                             </button>
-                                            
+
                                             <button
                                                 type="button"
                                                 className="btn btn-warning"
@@ -154,6 +155,14 @@ function TaskList({
                                                 }
                                             >
                                                 Editar
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger"
+                                                onClick={() => onDelete(task)}
+                                            >
+                                                Eliminar
                                             </button>
                                         </div>
                                     </td>
