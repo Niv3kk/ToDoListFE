@@ -1,15 +1,16 @@
 import {
     API_URL,
-    HEADERS,
-    handleResponse,
+    apiFetch,
 } from './api.service';
 
 export async function login(credentials) {
-    const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: HEADERS,
-        body: JSON.stringify(credentials),
-    });
+    return apiFetch(
+        `${API_URL}/login`,
+        {
+            method: 'POST',
 
-    return handleResponse(response);
+            body: JSON.stringify(credentials),
+        },
+        false
+    );
 }

@@ -9,6 +9,7 @@ const HEADERS = {
     'Content-Type': 'application/json',
 };
 
+
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({
@@ -24,6 +25,46 @@ const handleResponse = async (response) => {
     return response.json();
 };
 
+
+const getHeaders = (
+    customHeaders = {},
+    includeToken = true
+) => {
+    const headers = {
+        ...HEADERS,
+        ...customHeaders,
+    };
+
+    if (includeToken) {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+    }
+
+    return headers;
+};
+
+
+const apiFetch = async (
+    url,
+    options = {},
+    includeToken = true
+) => {
+    const response = await fetch(url, {
+        ...options,
+
+        headers: getHeaders(
+            options.headers,
+            includeToken
+        ),
+    });
+
+    return handleResponse(response);
+};
+
+
 export {
     API_URL,
     URL_TASK,
@@ -31,4 +72,5 @@ export {
     URL_CATEGORY,
     HEADERS,
     handleResponse,
+    apiFetch,
 };
