@@ -12,7 +12,6 @@ import {
 
 const normalize = (value) => value.trim();
 
-
 function TaskEdit({
     task,
     onUpdated,
@@ -31,7 +30,6 @@ function TaskEdit({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -46,21 +44,35 @@ function TaskEdit({
                     getAllTags(),
                 ]);
 
-                setCategories(categoriesResponse.data);
-                setTags(tagsResponse.data);
+                setCategories(
+                    categoriesResponse.data ?? []
+                );
 
-                setTitle(task.title);
-                setDescription(task.description);
+                setTags(
+                    tagsResponse.data ?? []
+                );
+
+                setTitle(
+                    task.title ?? ''
+                );
+
+                setDescription(
+                    task.description ?? ''
+                );
 
                 setCategoryId(
-                    String(task.category?.id ?? '')
+                    task.category?.id ?? ''
                 );
 
                 setSelectedTags(
-                    task.tags?.map((tag) => tag.id) ?? []
+                    task.tags?.map(
+                        (tag) => tag.id
+                    ) ?? []
                 );
 
-                setIsCompleted(task.is_completed);
+                setIsCompleted(
+                    Boolean(task.is_completed)
+                );
 
             } catch (error) {
                 setError(error.message);
@@ -74,42 +86,44 @@ function TaskEdit({
         }
     }, [task]);
 
-
     const handleTagsChange = (event) => {
         const values = Array.from(
             event.target.selectedOptions,
-            (option) => Number(option.value)
+            (option) => option.value
         );
 
         setSelectedTags(values);
     };
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError(null);
 
-        const normalizedTitle = normalize(title);
-        const normalizedDescription = normalize(description);
+        const normalizedTitle =
+            normalize(title);
+
+        const normalizedDescription =
+            normalize(description);
 
         if (!normalizedTitle) {
-            setError('El título es obligatorio.');
+            setError(
+                'El título es obligatorio.'
+            );
             return;
         }
 
         if (!normalizedDescription) {
-            setError('La descripción es obligatoria.');
+            setError(
+                'La descripción es obligatoria.'
+            );
             return;
         }
 
         if (!categoryId) {
-            setError('Debes seleccionar una categoría.');
-            return;
-        }
-
-        if (selectedTags.length === 0) {
-            setError('Debes seleccionar al menos una etiqueta.');
+            setError(
+                'Debes seleccionar una categoría.'
+            );
             return;
         }
 
@@ -118,15 +132,25 @@ function TaskEdit({
 
             const updatedTask = {
                 title: normalizedTitle,
-                description: normalizedDescription,
-                category_id: Number(categoryId),
-                tags: selectedTags,
-                is_completed: isCompleted,
+                description:
+                    normalizedDescription,
+                category_id:
+                    categoryId,
+                tags:
+                    selectedTags,
+                is_completed:
+                    isCompleted,
             };
 
-            await update(task.id, updatedTask);
+            await update(
+                task.id,
+                updatedTask
+            );
 
-            onUpdated();
+            if (onUpdated) {
+                onUpdated();
+            }
+
         } catch (error) {
             setError(error.message);
         } finally {
@@ -139,7 +163,6 @@ function TaskEdit({
         return null;
     }
 
-
     if (loadingData) {
         return (
             <div className="task-card">
@@ -147,7 +170,6 @@ function TaskEdit({
             </div>
         );
     }
-
 
     return (
         <div className="task-card">
@@ -169,7 +191,6 @@ function TaskEdit({
                 </button>
             </div>
 
-
             <form
                 onSubmit={handleSubmit}
                 className="task-form"
@@ -184,11 +205,12 @@ function TaskEdit({
                         type="text"
                         value={title}
                         onChange={(event) =>
-                            setTitle(event.target.value)
+                            setTitle(
+                                event.target.value
+                            )
                         }
                     />
                 </div>
-
 
                 <div className="form-group">
                     <label htmlFor="edit-task-description">
@@ -199,12 +221,13 @@ function TaskEdit({
                         id="edit-task-description"
                         value={description}
                         onChange={(event) =>
-                            setDescription(event.target.value)
+                            setDescription(
+                                event.target.value
+                            )
                         }
                         rows="4"
                     />
                 </div>
-
 
                 <div className="task-form-grid">
                     <div className="form-group">
@@ -225,17 +248,24 @@ function TaskEdit({
                                 Selecciona una categoría
                             </option>
 
-                            {categories.map((category) => (
-                                <option
-                                    key={category.id}
-                                    value={category.id}
-                                >
-                                    {category.name}
-                                </option>
-                            ))}
+                            {categories.map(
+                                (category) => (
+                                    <option
+                                        key={
+                                            category.id
+                                        }
+                                        value={
+                                            category.id
+                                        }
+                                    >
+                                        {
+                                            category.name
+                                        }
+                                    </option>
+                                )
+                            )}
                         </select>
                     </div>
-
 
                     <div className="form-group">
                         <label htmlFor="edit-task-status">
@@ -245,11 +275,15 @@ function TaskEdit({
                         <select
                             id="edit-task-status"
                             value={
-                                isCompleted ? '1' : '0'
+                                isCompleted
+                                    ? '1'
+                                    : '0'
                             }
                             onChange={(event) =>
                                 setIsCompleted(
-                                    event.target.value === '1'
+                                    event.target
+                                        .value ===
+                                        '1'
                                 )
                             }
                         >
@@ -264,7 +298,6 @@ function TaskEdit({
                     </div>
                 </div>
 
-
                 <div className="form-group">
                     <label htmlFor="edit-task-tags">
                         Etiquetas
@@ -273,8 +306,10 @@ function TaskEdit({
                     <select
                         id="edit-task-tags"
                         multiple
-                        value={selectedTags.map(String)}
-                        onChange={handleTagsChange}
+                        value={selectedTags}
+                        onChange={
+                            handleTagsChange
+                        }
                         size="5"
                     >
                         {tags.map((tag) => (
@@ -288,18 +323,17 @@ function TaskEdit({
                     </select>
 
                     <small className="form-help">
-                        Mantén Ctrl presionado para seleccionar
-                        varias etiquetas.
+                        Mantén Ctrl presionado
+                        para seleccionar varias
+                        etiquetas.
                     </small>
                 </div>
-
 
                 {error && (
                     <p className="message message-error">
                         {error}
                     </p>
                 )}
-
 
                 <div className="form-actions">
                     <button

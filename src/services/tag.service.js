@@ -10,34 +10,58 @@ export async function getAll() {
     });
 }
 
-
 export async function getOne(id) {
-    return apiFetch(`${URL_TAG}/${id}`, {
-        method: 'GET',
-    });
-}
+    const response = await getAll();
 
+    const tags =
+        response.data ?? [];
+
+    const tag = tags.find(
+        (tag) => tag.id === id
+    );
+
+    if (!tag) {
+        throw new Error(
+            'La etiqueta no fue encontrada.'
+        );
+    }
+
+    return {
+        data: tag,
+    };
+}
 
 export async function create(tag) {
     return apiFetch(URL_TAG, {
         method: 'POST',
 
-        body: JSON.stringify(tag),
+        body: JSON.stringify({
+            name: tag.name,
+        }),
     });
 }
 
+export async function update(
+    id,
+    tag
+) {
+    return apiFetch(
+        `${URL_TAG}/${id}`,
+        {
+            method: 'PUT',
 
-export async function update(id, tag) {
-    return apiFetch(`${URL_TAG}/${id}`, {
-        method: 'PUT',
-
-        body: JSON.stringify(tag),
-    });
+            body: JSON.stringify({
+                name: tag.name,
+            }),
+        }
+    );
 }
-
 
 export async function remove(id) {
-    return apiFetch(`${URL_TAG}/${id}`, {
-        method: 'DELETE',
-    });
+    return apiFetch(
+        `${URL_TAG}/${id}`,
+        {
+            method: 'DELETE',
+        }
+    );
 }

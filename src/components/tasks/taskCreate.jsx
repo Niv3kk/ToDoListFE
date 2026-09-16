@@ -24,7 +24,6 @@ function TaskCreate({
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-
     useEffect(() => {
         const loadOptions = async () => {
             try {
@@ -39,8 +38,13 @@ function TaskCreate({
                     getAllTags(),
                 ]);
 
-                setCategories(categoriesResponse.data);
-                setTags(tagsResponse.data);
+                setCategories(
+                    categoriesResponse.data ?? []
+                );
+
+                setTags(
+                    tagsResponse.data ?? []
+                );
 
             } catch (error) {
                 setError(error.message);
@@ -52,16 +56,14 @@ function TaskCreate({
         loadOptions();
     }, []);
 
-
     const handleTagsChange = (event) => {
         const values = Array.from(
             event.target.selectedOptions,
-            (option) => Number(option.value)
+            (option) => option.value
         );
 
         setSelectedTags(values);
     };
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -70,22 +72,23 @@ function TaskCreate({
         setSuccess(null);
 
         if (!title.trim()) {
-            setError('El título es obligatorio.');
+            setError(
+                'El título es obligatorio.'
+            );
             return;
         }
 
         if (!description.trim()) {
-            setError('La descripción es obligatoria.');
+            setError(
+                'La descripción es obligatoria.'
+            );
             return;
         }
 
         if (!categoryId) {
-            setError('Debes seleccionar una categoría.');
-            return;
-        }
-
-        if (selectedTags.length === 0) {
-            setError('Debes seleccionar al menos una etiqueta.');
+            setError(
+                'Debes seleccionar una categoría.'
+            );
             return;
         }
 
@@ -94,13 +97,15 @@ function TaskCreate({
 
             const task = {
                 title: title.trim(),
-                description: description.trim(),
-                category_id: Number(categoryId),
+                description:
+                    description.trim(),
+                category_id: categoryId,
                 tags: selectedTags,
                 is_completed: isCompleted,
             };
 
-            const response = await create(task);
+            const response =
+                await create(task);
 
             setSuccess(
                 response.message ||
@@ -113,7 +118,9 @@ function TaskCreate({
             setSelectedTags([]);
             setIsCompleted(false);
 
-            onCreated();
+            if (onCreated) {
+                onCreated();
+            }
 
         } catch (error) {
             setError(error.message);
@@ -122,7 +129,6 @@ function TaskCreate({
         }
     };
 
-
     if (loadingData) {
         return (
             <div className="task-card">
@@ -130,7 +136,6 @@ function TaskCreate({
             </div>
         );
     }
-
 
     return (
         <div className="task-card">
@@ -166,12 +171,13 @@ function TaskCreate({
                         type="text"
                         value={title}
                         onChange={(event) =>
-                            setTitle(event.target.value)
+                            setTitle(
+                                event.target.value
+                            )
                         }
                         placeholder="Ej: Terminar proyecto React"
                     />
                 </div>
-
 
                 <div className="form-group">
                     <label htmlFor="task-description">
@@ -182,13 +188,14 @@ function TaskCreate({
                         id="task-description"
                         value={description}
                         onChange={(event) =>
-                            setDescription(event.target.value)
+                            setDescription(
+                                event.target.value
+                            )
                         }
                         placeholder="Describe la tarea..."
                         rows="4"
                     />
                 </div>
-
 
                 <div className="task-form-grid">
                     <div className="form-group">
@@ -200,24 +207,33 @@ function TaskCreate({
                             id="task-category"
                             value={categoryId}
                             onChange={(event) =>
-                                setCategoryId(event.target.value)
+                                setCategoryId(
+                                    event.target.value
+                                )
                             }
                         >
                             <option value="">
                                 Selecciona una categoría
                             </option>
 
-                            {categories.map((category) => (
-                                <option
-                                    key={category.id}
-                                    value={category.id}
-                                >
-                                    {category.name}
-                                </option>
-                            ))}
+                            {categories.map(
+                                (category) => (
+                                    <option
+                                        key={
+                                            category.id
+                                        }
+                                        value={
+                                            category.id
+                                        }
+                                    >
+                                        {
+                                            category.name
+                                        }
+                                    </option>
+                                )
+                            )}
                         </select>
                     </div>
-
 
                     <div className="form-group">
                         <label htmlFor="task-status">
@@ -226,10 +242,16 @@ function TaskCreate({
 
                         <select
                             id="task-status"
-                            value={isCompleted ? '1' : '0'}
+                            value={
+                                isCompleted
+                                    ? '1'
+                                    : '0'
+                            }
                             onChange={(event) =>
                                 setIsCompleted(
-                                    event.target.value === '1'
+                                    event.target
+                                        .value ===
+                                    '1'
                                 )
                             }
                         >
@@ -244,7 +266,6 @@ function TaskCreate({
                     </div>
                 </div>
 
-
                 <div className="form-group">
                     <label htmlFor="task-tags">
                         Etiquetas
@@ -253,8 +274,10 @@ function TaskCreate({
                     <select
                         id="task-tags"
                         multiple
-                        value={selectedTags.map(String)}
-                        onChange={handleTagsChange}
+                        value={selectedTags}
+                        onChange={
+                            handleTagsChange
+                        }
                         size="5"
                     >
                         {tags.map((tag) => (
@@ -268,11 +291,11 @@ function TaskCreate({
                     </select>
 
                     <small className="form-help">
-                        Mantén Ctrl presionado para seleccionar
-                        varias etiquetas.
+                        Mantén Ctrl presionado
+                        para seleccionar varias
+                        etiquetas.
                     </small>
                 </div>
-
 
                 {error && (
                     <p className="message message-error">
@@ -285,7 +308,6 @@ function TaskCreate({
                         {success}
                     </p>
                 )}
-
 
                 <div className="form-actions">
                     <button
